@@ -4,7 +4,7 @@ using  namespace  std;
 
 
 // function to print a
-int print_a(bool flag) {
+void print_a(bool flag) {
     if (flag) {
         cout << a;
     } else {
@@ -12,7 +12,7 @@ int print_a(bool flag) {
     }
 }
 
-int print_b(bool flag) {
+void print_b(bool flag) {
     if (flag) {
         cout << b;
     } else {
