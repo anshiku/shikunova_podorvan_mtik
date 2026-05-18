@@ -1,0 +1,42 @@
+#include <iostream>
+using namespace std;
+int print_a(bool flag) {
+if (flag) {
+cout << a;
+} else {
+cout << 0;
+}
+}
+int print_b(bool flag) {
+if (flag) {
+cout << b;
+} else {
+cout << "Error";
+}
+}
+int main() {
+int a;
+int b;
+a = 10;
+b = 20;
+a = a ** 2;
+b = b ** 4;
+bool aboba = true;
+bool biba = false;
+for (int i = 0; i < 5; i++) {
+print_a(aboba);
+aboba = !aboba;
+}
+while (aboba) {
+print_a(aboba);
+aboba = false;
+}
+for (int i = 0; i < 4; i++) {
+print_b(biba);
+biba = !biba;
+}
+while (biba) {
+print_b(biba);
+biba = false;
+}
+}
