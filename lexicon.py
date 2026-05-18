@@ -108,7 +108,124 @@ def read_number(text, start):
 
     return Token("CONSTANT_INT", lexeme), i, None
 
-
+def lex_analyze(text):
+    tokens = []
+    errors = []
+ 
+    i = 0
+    sorted_operators = sorted(OPERATORS, key=len, reverse=True)
+ 
+    while i < len(text):
+        ch = text[i]
+ 
+        if ch.isspace():
+            i += 1
+            continue
+ 
+        if ch in ('"', "'"):
+            lexeme, new_i, error = read_string(text, i)
+ 
+            if error:
+                errors.append(error)
+            else:
+                tokens.append(Token("CONSTANT_STRING", lexeme))
+ 
+            i = new_i
+            continue
+ 
+        if is_identifier_start(ch):
+            start = i
+ 
+            while i < len(text) and is_identifier_char(text[i]):
+                i += 1
+ 
+            lexeme = text[start:i]
+ 
+            if lexeme in KEYWORDS:
+                tokens.append(Token("KEYWORD", lexeme))
+            elif lexeme in BOOLEAN_CONSTANTS:
+                tokens.append(Token("CONSTANT_BOOL", lexeme))
+            else:
+                tokens.append(Token("IDENTIFIER", lexeme))
+ 
+            continue
+ 
+        if ch.isdigit():
+            token, new_i, error = read_number(text, i)
+ 
+            if error:
+                errors.append(error)
+            else:
+                tokens.append(token)
+ 
+            i = new_i
+            continue
+ 
+        matched = False
+ 
+        for op in sorted_operators:
+            if text.startswith(op, i):
+                tokens.append(Token("OPERATOR", op))
+                i += len(op)
+                matched = True
+                break
+ 
+        if matched:
+            continue
+ 
+        if ch in DELIMITERS:
+            tokens.append(Token("DELIMITER", ch))
+            i += 1
+            continue
+ 
+        errors.append(f"Ошибка: недопустимый символ: {ch}")
+ 
+        i += 1
+ 
+    return tokens, errors
+ 
+def print_tokens(tokens):
+    print("Лексема".ljust(25) + "| Тип")
+    print("-" * 25 + "+" + "-" * 25)
+ 
+    for token in tokens:
+        print(token.lexeme.ljust(25) + "| " + token.token_type)
+ 
+def print_token_sequence(tokens):
+    sequence = [(token.token_type, token.lexeme) for token in tokens]
+    print(sequence)
+ 
+def main():
+    input_file = "test.cpp"
+    cleaned_file = "cleaned_test.cpp"
+ 
+    try:
+        code = read_file(input_file)
+ 
+        if has_unclosed_comment(code):
+            print("Ошибка: незакрытый многострочный комментарий.")
+            return
+ 
+        cleaned = preprocess(code)
+        write_file(cleaned_file, cleaned)
+ 
+        tokens, errors = lex_analyze(cleaned)
+ 
+        print("Результат лексического анализа:")
+        print_tokens(tokens)
+        print()
+ 
+        if errors:
+            print("Обнаружены лексические ошибки:")
+            for error in errors:
+                print(error)
+        else:
+            print(f"Лексический анализ завершён успешно. Обнаружено {len(tokens)} токенов. Ошибок не найдено.")
+ 
+    except FileNotFoundError:
+        print(f"Ошибка: файл {input_file} не найден.")
+    except Exception as e:
+        print(f"Ошибка: {e}")
 
 if __name__ == "__main__":
     main()
