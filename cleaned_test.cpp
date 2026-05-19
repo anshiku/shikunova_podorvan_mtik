@@ -2,14 +2,14 @@
 using namespace std;
 int print_a(bool flag) {
 if (flag) {
-cout << a;
+cout << "a";
 } else {
 cout << 0;
 }
 }
 int print_b(bool flag) {
 if (flag) {
-cout << b;
+cout << "b";
 } else {
 cout << "Error";
 }
